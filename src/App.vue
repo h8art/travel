@@ -1,13 +1,17 @@
 <template lang='pug'>
   v-app
-    v-card.pa-4.inner(flat='', height='100vh', img='https://cdn.vuetifyjs.com/images/toolbar/map.jpg')
+    .inner
+      MainMap.map
       v-card.search.pa-4
         .search-box
-          v-text-field(hide-details='', prepend-icon='search', single-line='')
+          v-text-field(prepend-icon='location_on', single-line='',  placeholder='Введите адрес')
           v-btn(icon='')
             v-icon my_location
-          v-btn(icon='')
-            v-icon mdi-dots-vertical
+        v-slider.align-center.mb-4(v-model='slider', :max='max', :min='min', hide-details='' label="Бюджет")
+          template(v-slot:append='')
+            v-text-field.mt-0.pt-0(v-model='slider', hide-details='', single-line='', type='number', style='width: 100px' append-icon='attach_money')
+        .fl.jc-sb
+          v-btn(block color='primary') Указать интересы
       .side
         v-card.mx-auto.side-card(max-width='400' v-for='i in 5')
           v-img.white--text.align-end(height='150px', src='https://images.genius.com/b0e6093f6a03a653662c7a2ec299ae9a.1000x1000x1.jpg')
@@ -21,23 +25,33 @@
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld';
+import MainMap from './components/MainMap'
 
 export default {
   name: 'App',
 
   components: {
-    HelloWorld,
+    MainMap
   },
   mounted() {
-    // this.$vuetify.theme.dark = true
+    this.$vuetify.theme.dark = true
   },
   data: () => ({
     //
   }),
 };
 </script>
+<style lang="sass">
+.mapboxgl-ctrl, .mapboxgl-ctrl-attrib
+  display: none !important
+</style>
 <style lang="sass" scoped>
+.map
+  position: absolute
+  left: 0
+  top: 0
+  right: 0
+  bottom: 0
 .inner
   width: 100%
   display: flex
@@ -48,16 +62,21 @@ export default {
     margin-top: 200px
     height: fit-content
     .search-box
-      width: 480px
+      width: 500px
       display: flex
       align-items: baseline
   .side
     max-height: 100vh
     overflow-y: overlay
+    padding-top: 40px
     &-card
       transform: translateX(200px)
       transition: transform .3s
       margin-bottom: 15px
       &:hover
         transform: translateX(0px)
+.fl
+  display: flex
+.jc-sb
+  justify-content: space-between
 </style>
