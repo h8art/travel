@@ -1,15 +1,11 @@
 <template lang='pug'>
-MglMap(container='map-test', :center.sync='center', :accessToken='accessToken', :mapStyle='mapStyle', :zoom='11')
-  MglMarker(:coordinates='coordinates')
-    img(slot='marker' src='@/assets/cinema_32.png')
-    MglPopup
-      div
-        h2 Название мероприятия
-        span ваувауавауауауававауаваувау
+#map
 </template>
 
 <script>
+/* eslint-disable no-undef */
 import { MglMap, MglMarker, MglGeojsonLayer, MglPopup } from 'vue-mapbox'
+import axios from 'axios'
 
 export default {
   name: 'MainMap',
@@ -19,12 +15,51 @@ export default {
       return this.$store.state.inSearch
     }
   },
+  mounted() {
+    mapboxgl.accessToken = 'pk.eyJ1IjoiaDhhcnQiLCJhIjoiY2p0ajF0bmYxMnY5NTQ2cDdnNzRxMHhlbyJ9.anl09z7LVH8i0-Bm0PHB0w';
+    var map = new mapboxgl.Map({
+      container: 'map',
+      style: 'mapbox://styles/h8art/cjtvhhlyw0z391fpcym18tz2e/draft',
+      center: [37.618423, 55.751244],
+      zoom: 11
+    });
+    map.on('load', function() {
+      this.map = map
+      console.log(this.map)
+      this.categories 
+      axios.get('https://api.mapbox.com/directions/v5/mapbox/driving/37.51718,55.6814895;37.668817,55.7526269?geometries=geojson&access_token=pk.eyJ1IjoiaDhhcnQiLCJhIjoiY2p0ajF0bmYxMnY5NTQ2cDdnNzRxMHhlbyJ9.anl09z7LVH8i0-Bm0PHB0w').then((resp) => {
+        this.map.addSource('route', {
+          'type': 'geojson',
+          'data': {
+            'type': 'Feature',
+            'properties': {},
+            'geometry': resp.data.routes[0].geometry
+          }
+        });
+        this.map.addLayer({
+          'id': 'route',
+          'type': 'line',
+          'source': 'route',
+          'layout': {
+            'line-join': 'round',
+            'line-cap': 'round'
+          },
+          'paint': {
+            'line-color': '#f8ff88',
+            'line-width': 1
+          }
+        });
+      })
+    })
+  },
+
   data() {
     return {
       accessToken: 'pk.eyJ1IjoiaDhhcnQiLCJhIjoiY2p0ajF0bmYxMnY5NTQ2cDdnNzRxMHhlbyJ9.anl09z7LVH8i0-Bm0PHB0w',
-      mapStyle: 'mapbox://styles/h8art/cjtvhhlyw0z391fpcym18tz2e',
+      mapStyle: 'mapbox://styles/h8art/cjtvhhlyw0z391fpcym18tz2e/draft',
       coordinates: [37.618423, 55.751244],
-      center: {lng: 37.618423, lat: 55.751244}
+      center: {lng: 37.618423, lat: 55.751244},
+      map: null
     }
   }
 }
