@@ -64,6 +64,9 @@ export default {
   methods: {
     search() {
       this.$store.commit('openSearch')
+      if(this.inSearch) {
+        this.$store.commit('makeSearch')
+      }
     }
   },
   data: () => ({

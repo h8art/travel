@@ -33,7 +33,10 @@ export default {
     },
     addAllMarkers() {
       this.events.forEach((ev) => {
-        this.markers.push(new mapboxgl.Marker().setLngLat(ev.venue.google_address.split(",").reverse()).addTo(this.map));
+        var el = document.createElement('div');
+        el.className = 'marker-icon';
+        el.style.backgroundImage= `url('/${ev.mainCategory}.png')`;
+        this.markers.push(new mapboxgl.Marker(el).setLngLat(ev.venue.google_address.split(",").reverse()).addTo(this.map));
       })
     }
   },
@@ -85,6 +88,14 @@ export default {
   }
 }
 </script>
+<style lang="sass">
+.marker-icon
+  background-size: cover
+  width: 32px
+  height: 32px
+  border-radius: 50%
+  cursor: pointer
+</style>
 <style lang="sass" scoped>
 .card
   width: 400px

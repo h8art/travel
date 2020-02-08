@@ -14,7 +14,7 @@ export default {
   },
   methods: {
     changeCategory(val){
-      this.$store.dispatch('getEvents', val[val.length - 1])
+      this.$store.dispatch('getEvents', val)
     }
   }
 }
@@ -25,5 +25,4 @@ export default {
   margin-top: 10px
   margin-left: 10px
   margin-bottom: 10px
-  flex: 1
 </style>
