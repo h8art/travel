@@ -2,17 +2,20 @@
   v-app
     .inner
       MainMap.map
-      v-card.search.pa-4
-        .search-box
-          v-text-field(prepend-icon='location_on', single-line='',  placeholder='Введите адрес')
-          v-btn(icon='')
-            v-icon my_location
-        v-slider.align-center.mb-4(v-model='slider', :max='max', :min='min', hide-details='' label="Бюджет")
-          template(v-slot:append='')
-            v-text-field.mt-0.pt-0(v-model='slider', hide-details='', single-line='', type='number', style='width: 100px' append-icon='attach_money')
-        v-btn.mb-2(block text @click='dialog=true') Указать интересы
-        Interests(:opened='dialog' @close='dialog = false')
-        v-btn(block color='primary') Поиск
+      .left
+        v-card.search.pa-4(:style='searchStyle')
+          .search-box
+            v-text-field(prepend-icon='location_on', single-line='',  placeholder='Введите адрес')
+            v-btn(icon='')
+              v-icon my_location
+          v-slider.align-center.mb-4(v-model='slider', :max='max', :min='min', hide-details='' label="Бюджет")
+            template(v-slot:append='')
+              v-text-field.mt-0.pt-0(v-model='slider', hide-details='', single-line='', type='number', style='width: 100px' append-icon='attach_money')
+          v-btn.mb-2(block text @click='dialog=true') Указать интересы
+          Interests(:opened='dialog' @close='dialog = false')
+          v-btn(block color='primary' @click='search') Поиск
+        transition(enter-active-class="animated slideInLeft" leave-active-class="animated slideOutLeft")
+          filters(v-if='inSearch')
       transition(enter-active-class="animated slideInRight" leave-active-class="animated slideOutRight")
         .side(v-if='!inSearch')
           v-card.mx-auto.side-card(max-width='400' v-for='i in 5')
@@ -29,12 +32,14 @@
 <script>
 import MainMap from './components/MainMap'
 import Interests from './components/Interests'
+import Filters from './components/Filters'
 export default {
   name: 'App',
 
   components: {
     MainMap,
-    Interests
+    Interests,
+    Filters
   },
   mounted() {
     this.$vuetify.theme.dark = true
@@ -42,10 +47,22 @@ export default {
   computed: {
     inSearch() {
       return this.$store.state.inSearch
+    },
+    searchStyle() {
+      if(this.inSearch) {
+        return 'margin-left: 10px; margin-top: 10px; width: 400px'
+      }else  {
+        return 'margin-left: 200px; margin-top: 200px; width: 500px'
+      }
+    }
+  },
+  methods: {
+    search() {
+      this.$store.commit('openSearch')
     }
   },
   data: () => ({
-    dialog: true
+    dialog: false
   }),
 };
 </script>
@@ -54,6 +71,10 @@ export default {
   display: none !important
 </style>
 <style lang="sass" scoped>
+.left
+  display: flex
+  height: 100vh
+  flex-direction: column
 .map
   position: absolute
   left: 0
@@ -65,12 +86,11 @@ export default {
   display: flex
   justify-content: space-between
   .search
-    margin-left: 200px
     width: fit-content
-    margin-top: 200px
     height: fit-content
+    transition: all .5s
     .search-box
-      width: 500px
+      
       display: flex
       align-items: baseline
   .side
