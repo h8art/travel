@@ -1,28 +1,22 @@
 <template lang="pug">
   v-card.card.pa-4
-    v-select(v-model='category', :items='categoryList', attach='', chips='', label='Категории', multiple='')
+    v-select(v-model='category', :items='categories', item-text='title', item-value='id' attach='', chips='', label='Категории', multiple='', @change='changeCategory')
 </template>
 <script>
 export default {
   data: () => ({
     category: null,
-    categoryList: [
-      'Концерты',
-      'Театр',
-      'Елки',
-      'Детям',
-      'Шоу',
-      'Спорт',
-      'Семинары',
-      'Мюзиклы',
-      'Выставки',
-      'Экскурсии',
-      'Музеи',
-      'Фестивали лета',
-      'Фестивали',
-      'Цирки',
-    ]
-  })
+  }),
+  computed: {
+    categories() {
+      return this.$store.state.categories
+    }
+  },
+  methods: {
+    changeCategory(val){
+      this.$store.dispatch('getEvents', val[val.length - 1])
+    }
+  }
 }
 </script>
 <style lang="sass" scoped>

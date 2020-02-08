@@ -13,19 +13,39 @@ export default {
   computed: {
     inSearch() {
       return this.$store.state.inSearch
+    },
+    events() {
+      return this.$store.state.events
+    }
+  },
+  watch: {
+    events() {
+      this.removeAllMarkers()
+      this.addAllMarkers()
+    }
+  },
+  methods: {
+    removeAllMarkers() {
+      this.markers.forEach(m => {
+        m.remove()
+      })
+      this.markers.length = 0
+    },
+    addAllMarkers() {
+      this.events.forEach((ev) => {
+        this.markers.push(new mapboxgl.Marker().setLngLat(ev.venue.google_address.split(",").reverse()).addTo(this.map));
+      })
     }
   },
   mounted() {
     mapboxgl.accessToken = 'pk.eyJ1IjoiaDhhcnQiLCJhIjoiY2p0ajF0bmYxMnY5NTQ2cDdnNzRxMHhlbyJ9.anl09z7LVH8i0-Bm0PHB0w';
-    var map = new mapboxgl.Map({
+    this.map = new mapboxgl.Map({
       container: 'map',
       style: 'mapbox://styles/h8art/cjtvhhlyw0z391fpcym18tz2e/draft',
       center: [37.618423, 55.751244],
       zoom: 11
     });
-    map.on('load', function() {
-      this.map = map
-      console.log(this.map)
+    this.map.on('load', () => {
       this.categories 
       axios.get('https://api.mapbox.com/directions/v5/mapbox/driving/37.51718,55.6814895;37.668817,55.7526269?geometries=geojson&access_token=pk.eyJ1IjoiaDhhcnQiLCJhIjoiY2p0ajF0bmYxMnY5NTQ2cDdnNzRxMHhlbyJ9.anl09z7LVH8i0-Bm0PHB0w').then((resp) => {
         this.map.addSource('route', {
@@ -59,7 +79,8 @@ export default {
       mapStyle: 'mapbox://styles/h8art/cjtvhhlyw0z391fpcym18tz2e/draft',
       coordinates: [37.618423, 55.751244],
       center: {lng: 37.618423, lat: 55.751244},
-      map: null
+      map: null,
+      markers: []
     }
   }
 }
