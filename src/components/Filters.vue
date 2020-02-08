@@ -1,6 +1,5 @@
 <template lang="pug">
-  v-card.card.pa-4
-    v-select(v-model='category', :items='categories', item-text='title', item-value='id' attach='', chips='', label='Категории', multiple='', @change='changeCategory')
+v-select(v-model='category', :items='categories', item-text='title', item-value='id' attach='', chips='', label='Категории', multiple='', @change='changeCategory')
 </template>
 <script>
 export default {
