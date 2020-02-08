@@ -5,8 +5,12 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    inSearch: false
   },
   mutations: {
+    openSearch: (state) => {
+      state.inSearch = true
+    }
   },
   actions: {
   },

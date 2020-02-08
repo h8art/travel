@@ -7,7 +7,7 @@ MglMap(container='map-test', :center.sync='center', :accessToken='accessToken', 
 import { MglMap, MglMarker, MglGeojsonLayer } from 'vue-mapbox'
 
 export default {
-  name: 'App',
+  name: 'MainMap',
   components: { MglMap, MglMarker, MglGeojsonLayer },
   data() {
     return {
