@@ -1,5 +1,7 @@
 <template lang="pug">
-v-select(v-model='category', :items='categories', item-text='title', item-value='id' attach='', chips='', label='Категории', multiple='', @change='changeCategory')
+div
+  v-select(v-model='category', :items='categories', item-text='title', item-value='id' attach='', chips='', label='Категории', multiple='', @change='changeCategory')
+  
 </template>
 <script>
 export default {

@@ -3,9 +3,7 @@ transition(enter-active-class="animated slideInDown" leave-active-class="animate
   .fl(:key='tabsKey', v-if='events.length>0')
     v-card.card
       v-tabs(v-model="tab")
-        v-tab 1
-        v-tab 2
-        v-tab 3
+        v-tab(v-for='i in tabsCount') {{i}}
 </template>
 <script>
 export default {
@@ -19,6 +17,7 @@ export default {
     tab() {
       this.$store.dispatch('updTab',this.tab)
     },
+    
     events() {
       if(this.events.length>0){
         this.tabsKey = !this.tabsKey
@@ -29,6 +28,9 @@ export default {
  
   },
   computed: {
+    tabsCount() {
+      return this.$store.state.tabsCount
+    },
     actualTab() {
       return this.$store.state.actualTab
     },

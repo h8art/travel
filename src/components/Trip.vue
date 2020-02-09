@@ -5,11 +5,11 @@
         v-card-title.tit {{e.title}}
       v-card-subtitle.pb-0 {{e.venue.title}}
       v-card-text.text--primary
-        div Длительность: 1.5ч
+        div {{}}
         div Стоимость: {{e.max_price}} руб.
       v-card-actions
         .spacer
-        v-btn(color='primary', text='') Узнать подробнее
+        v-btn(color='primary', text='', @click='openEvent(e.id)') Узнать подробнее
 </template>
 <script>
 function formatDate(dat) {
@@ -33,6 +33,9 @@ export default {
     }
   },
   methods: {
+    openEvent(id) {
+      this.$store.commit('setEventId', id)
+    },
     fDate(date) {
       return formatDate(date)
     }

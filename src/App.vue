@@ -2,20 +2,30 @@
   v-app
     .inner
       RouteTabs
+      FullInfo
       MainMap.map
       .left
         v-card.search.pa-4(:style='searchStyle')
           .search-box
             v-text-field(prepend-icon='location_on', single-line='',  placeholder='Введите адрес', value='Южнопортовая улица, 22с1')
-          v-slider.align-center.mb-4(v-model='slider', :max='10000', :min='2500', hide-details='' label="Бюджет")
+          v-slider.align-center.mb-4(v-model='budgetInp', :max='10000', :min='2500', hide-details='' label="Бюджет")
             template(v-slot:append='')
-              v-text-field.mt-0.pt-0(v-model='slider', hide-details='', single-line='', type='number', ,style='width: 100px' suffix='руб.')
+              v-text-field.mt-0.pt-0(v-model='budgetInp', hide-details='', single-line='', type='number', ,style='width: 100px' suffix='руб.')
           filters
           v-expansion-panels(flat)
             v-expansion-panel
               v-expansion-panel-header Дополнительные параметры
               v-expansion-panel-content
                 v-text-field(placeholder='Конечная точка маршрута')
+                v-row
+                  v-menu(ref='menu1', v-model='menu1', :close-on-content-click='false', :return-value.sync='startTime', transition='scale-transition',  max-width='290px', min-width='290px')
+                    template(v-slot:activator='{ on }')
+                      v-text-field(v-model='startTime', label='Время начала', format="24hr", prepend-icon='access_time', readonly='', v-on='on')
+                    v-time-picker(v-if='menu1', v-model='startTime', full-width='', @click:minute='$refs.menu1.save(startTime)')
+                  v-menu(ref='menu2', v-model='menu2', :close-on-content-click='false', :return-value.sync='endTime', transition='scale-transition',  max-width='290px', min-width='290px')
+                    template(v-slot:activator='{ on }')
+                      v-text-field(v-model='endTime', label='Конченое время', readonly='', v-on='on')
+                    v-time-picker(v-if='menu2', v-model='endTime', full-width='', format="24hr", @click:minute='$refs.menu2.save(endTime)')
           v-btn.mb-2(block text @click='dialog=true') Указать интересы
           Interests(:opened='dialog' @close='dialog = false')
           v-btn(block color='primary' @click='search') Поиск
@@ -40,6 +50,7 @@ import Interests from './components/Interests'
 import Filters from './components/Filters'
 import Trip from './components/Trip'
 import RouteTabs from './components/RouteTabs'
+import FullInfo from './components/FullInfo'
 export default {
   name: 'App',
 
@@ -48,13 +59,38 @@ export default {
     Interests,
     Filters,
     Trip,
-    RouteTabs
+    RouteTabs,
+    FullInfo
   },
   mounted() {
     this.$vuetify.theme.dark = true
     this.$store.dispatch('getCategories')
   },
   computed: {
+    startTime: {
+      get() {
+        return this.$store.state.startTime
+      },
+      set(val) {
+        this.$store.commit('updStartTime', val)
+      }
+    },
+    endTime: {
+      get() {
+        return this.$store.state.endTime
+      },
+      set(val) {
+        this.$store.commit('updEndTime', val)  
+      }
+    },
+    budgetInp: {
+      get() {
+        return this.$store.state.budget
+      },
+      set(val) {
+        this.$store.commit('updBudget', val)
+      }
+    },
     events() {
       return this.$store.state.actualEvents.length
     },
@@ -78,7 +114,9 @@ export default {
     }
   },
   data: () => ({
-    dialog: false
+    dialog: false,
+    menu1: false,
+    menu2: false
   }),
 };
 </script>
