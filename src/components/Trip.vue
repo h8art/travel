@@ -9,7 +9,6 @@
         div Стоимость: {{e.max_price}} руб.
       v-card-actions
         .spacer
-        v-btn(color='primary' text) Сменить
         v-btn(color='primary', text='') Узнать подробнее
 </template>
 <script>

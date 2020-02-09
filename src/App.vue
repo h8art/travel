@@ -7,12 +7,15 @@
         v-card.search.pa-4(:style='searchStyle')
           .search-box
             v-text-field(prepend-icon='location_on', single-line='',  placeholder='Введите адрес', value='Южнопортовая улица, 22с1')
-            v-btn(icon='')
-              v-icon my_location
-          v-slider.align-center.mb-4(v-model='slider', :max='max', :min='min', hide-details='' label="Бюджет")
+          v-slider.align-center.mb-4(v-model='slider', :max='10000', :min='2500', hide-details='' label="Бюджет")
             template(v-slot:append='')
-              v-text-field.mt-0.pt-0(v-model='slider', hide-details='', single-line='', type='number', style='width: 100px' append-icon='attach_money')
+              v-text-field.mt-0.pt-0(v-model='slider', hide-details='', single-line='', type='number', ,style='width: 100px' suffix='руб.')
           filters
+          v-expansion-panels(flat)
+            v-expansion-panel
+              v-expansion-panel-header Дополнительные параметры
+              v-expansion-panel-content
+                v-text-field(placeholder='Конечная точка маршрута')
           v-btn.mb-2(block text @click='dialog=true') Указать интересы
           Interests(:opened='dialog' @close='dialog = false')
           v-btn(block color='primary' @click='search') Поиск

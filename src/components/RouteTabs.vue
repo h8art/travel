@@ -2,7 +2,7 @@
 transition(enter-active-class="animated slideInDown" leave-active-class="animated slideOutUp" mode="out-in")
   .fl(:key='tabsKey', v-if='events.length>0')
     v-card.card
-      v-tabs
+      v-tabs(v-model="tab")
         v-tab 1
         v-tab 2
         v-tab 3
@@ -11,17 +11,27 @@ transition(enter-active-class="animated slideInDown" leave-active-class="animate
 export default {
   data() {
     return {
-      tabsKey: false
+      tabsKey: false,
+      tab: 0
     }
   },
   watch: {
+    tab() {
+      this.$store.dispatch('updTab',this.tab)
+    },
     events() {
       if(this.events.length>0){
         this.tabsKey = !this.tabsKey
       }
     }
   },
+  methods: {
+ 
+  },
   computed: {
+    actualTab() {
+      return this.$store.state.actualTab
+    },
     events() {
       return this.$store.state.actualEvents
     },

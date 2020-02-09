@@ -12,15 +12,41 @@ export default new Vuex.Store({
     inSearch: false,
     categories: null,
     events: [],
-    actualEvents: []
+    actualEvents: [],
+    trip: null,
+    actualTab: 0,
   },
   mutations: {
+    makeSearchTab: (state) => {
+      const {actualTab} = state
+      state.actualEvents = []
+      const points = state.events.slice(4*actualTab, actualTab*4 + 4).map(p => {
+        return {
+          geo: p.venue.google_address.split(",").reverse().join(',').replace(/\s/g, ""),
+          id: p.id
+        }
+      })
+      Axios.get(`https://api.mapbox.com/optimized-trips/v1/mapbox/driving/37.681174,55.718520;${points.map(g=>g.geo).join(";")}?access_token=pk.eyJ1IjoiaDhhcnQiLCJhIjoiY2p0ajF0bmYxMnY5NTQ2cDdnNzRxMHhlbyJ9.anl09z7LVH8i0-Bm0PHB0w&geometries=geojson`).then(resp => {
+        state.actualEvents = state.events.slice(4*actualTab, actualTab*4 + 4)
+        state.trip = resp.data.trips[0].geometry
+      })
+      // for(let i = 0; i < random(2, 3); i++){
+      //   /optimized-trips/v1/{profile}/
+      //   state.actualEvents.push(state.events[random(0, state.events.length - 1)])
+      // }
+    },
     makeSearch: (state) => {
       state.actualEvents = []
-      const points = state.events.slice(0, size)
-      
-      Axios.get(`https://api.mapbox.com/optimized-trips/v1/mapbox/driving/37.681174,55.718520;37.681174,55.718520?access_token=pk.eyJ1IjoiaDhhcnQiLCJhIjoiY2p0ajF0bmYxMnY5NTQ2cDdnNzRxMHhlbyJ9.anl09z7LVH8i0-Bm0PHB0w&geometries=geojson`).then(resp => {
-        console.log(resp.data)
+      const points = state.events.slice(0, 4).map(p => {
+        return {
+          geo: p.venue.google_address.split(",").reverse().join(',').replace(/\s/g, ""),
+          id: p.id
+        }
+      })
+      state.actualTab = 0
+      Axios.get(`https://api.mapbox.com/optimized-trips/v1/mapbox/driving/37.681174,55.718520;${points.map(g=>g.geo).join(";")}?access_token=pk.eyJ1IjoiaDhhcnQiLCJhIjoiY2p0ajF0bmYxMnY5NTQ2cDdnNzRxMHhlbyJ9.anl09z7LVH8i0-Bm0PHB0w&geometries=geojson`).then(resp => {
+        state.actualEvents = state.events.slice(0, 4)
+        state.trip = resp.data.trips[0].geometry
       })
       // for(let i = 0; i < random(2, 3); i++){
       //   /optimized-trips/v1/{profile}/
@@ -39,6 +65,10 @@ export default new Vuex.Store({
     },
   },
   actions: {
+    updTab: ({state, commit}, tab) => {
+      state.actualTab = tab
+      commit('makeSearchTab')
+    },
     getEvents: ({commit, state}, payload) => {
       if(state.events.length/20>payload.length){
         state.events = state.events.filter(ev => payload.includes(ev.mainCategory))

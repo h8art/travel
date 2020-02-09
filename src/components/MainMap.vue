@@ -5,12 +5,15 @@
 <script>
 /* eslint-disable no-undef */
 import { MglMap, MglMarker, MglGeojsonLayer, MglPopup } from 'vue-mapbox'
-import axios from 'axios'
+// import axios from 'axios'
 
 export default {
   name: 'MainMap',
   components: { MglMap, MglMarker, MglGeojsonLayer, MglPopup },
   computed: {
+    trip() {
+      return this.$store.state.trip
+    },
     inSearch() {
       return this.$store.state.inSearch
     },
@@ -22,8 +25,13 @@ export default {
     }
   },
   watch: {
+    trip(neww, old) {
+      if(old) {
+        this.removeAllRoads()
+      }
+      this.addRoad()
+    },
     actualEvents() {
-      this.removeAllRoads()
       this.removeAllMarkers()
       this.addActualMarkers()
     },
@@ -35,12 +43,32 @@ export default {
     }
   },
   methods: {
+    addRoad() {
+      this.map.addSource('route1', {
+        'type': 'geojson',
+        'data': {
+          'type': 'Feature',
+          'properties': {},
+          'geometry': this.trip
+        }
+      });
+      this.map.addLayer({
+        'id': 'route1',
+        'type': 'line',
+        'source': 'route1',
+        'layout': {
+          'line-join': 'round',
+          'line-cap': 'round'
+        },
+        'paint': {
+          'line-color': '#f8ff88',
+          'line-width': 1
+        }
+      });
+    },
     removeAllRoads() {
-      this.roads.forEach(r=>{
-        this.map.removeLayer(r)
-        this.map.removeSource(r)
-      })
-      this.roads = []
+      this.map.removeLayer('route1')
+      this.map.removeSource('route1')
     },
     removeAllMarkers() {
       this.markers.forEach(m => {
@@ -49,36 +77,9 @@ export default {
       this.markers.length = 0
     },
     addActualMarkers() {
-      let startPoint = '37.681174,55.718520'
-      this.actualEvents.forEach((ev,ind) => {
-        if(ind!=0){
-          startPoint = this.actualEvents[ind-1].venue.google_address.split(",").reverse().join(',')
-        }
-        const strGeo = ev.venue.google_address.split(",").reverse().join(',')
-        axios.get(`https://api.mapbox.com/directions/v5/mapbox/driving/${startPoint};${strGeo}?geometries=geojson&access_token=pk.eyJ1IjoiaDhhcnQiLCJhIjoiY2p0ajF0bmYxMnY5NTQ2cDdnNzRxMHhlbyJ9.anl09z7LVH8i0-Bm0PHB0w`).then((resp) => {
-          this.roads.push('route' + ind)
-          this.map.addSource('route' + ind, {
-            'type': 'geojson',
-            'data': {
-              'type': 'Feature',
-              'properties': {},
-              'geometry': resp.data.routes[0].geometry
-            }
-          });
-          this.map.addLayer({
-            'id': 'route' + ind,
-            'type': 'line',
-            'source': 'route' + ind,
-            'layout': {
-              'line-join': 'round',
-              'line-cap': 'round'
-            },
-            'paint': {
-              'line-color': '#f8ff88',
-              'line-width': 1
-            }
-          });
-        })
+      this.actualEvents.forEach((ev) => {
+
+
         var el = document.createElement('div');
         el.className = 'marker-icon';
         el.style.backgroundImage= `url('/${ev.mainCategory}.png')`;
