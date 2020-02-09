@@ -12,20 +12,21 @@
             template(v-slot:append='')
               v-text-field.mt-0.pt-0(v-model='budgetInp', hide-details='', single-line='', type='number', ,style='width: 100px' suffix='руб.')
           filters
+          v-row.pa-3
+            v-menu(ref='menu1', v-model='menu1', :close-on-content-click='false', :return-value.sync='startTime', transition='scale-transition',  max-width='290px', min-width='290px')
+              template(v-slot:activator='{ on }')
+                v-text-field(v-model='startTime', label='Время начала', format="24hr", prepend-icon='access_time', readonly='', v-on='on')
+              v-time-picker(v-if='menu1', v-model='startTime', full-width='', @click:minute='$refs.menu1.save(startTime)')
+            v-menu(ref='menu2', v-model='menu2', :close-on-content-click='false', :return-value.sync='endTime', transition='scale-transition',  max-width='290px', min-width='290px')
+              template(v-slot:activator='{ on }')
+                v-text-field(v-model='endTime', label='Конченое время', readonly='', v-on='on')
+              v-time-picker(v-if='menu2', v-model='endTime', full-width='', format="24hr", @click:minute='$refs.menu2.save(endTime)')
           v-expansion-panels(flat)
             v-expansion-panel
               v-expansion-panel-header Дополнительные параметры
               v-expansion-panel-content
                 v-text-field(placeholder='Конечная точка маршрута')
-                v-row
-                  v-menu(ref='menu1', v-model='menu1', :close-on-content-click='false', :return-value.sync='startTime', transition='scale-transition',  max-width='290px', min-width='290px')
-                    template(v-slot:activator='{ on }')
-                      v-text-field(v-model='startTime', label='Время начала', format="24hr", prepend-icon='access_time', readonly='', v-on='on')
-                    v-time-picker(v-if='menu1', v-model='startTime', full-width='', @click:minute='$refs.menu1.save(startTime)')
-                  v-menu(ref='menu2', v-model='menu2', :close-on-content-click='false', :return-value.sync='endTime', transition='scale-transition',  max-width='290px', min-width='290px')
-                    template(v-slot:activator='{ on }')
-                      v-text-field(v-model='endTime', label='Конченое время', readonly='', v-on='on')
-                    v-time-picker(v-if='menu2', v-model='endTime', full-width='', format="24hr", @click:minute='$refs.menu2.save(endTime)')
+                
           v-btn.mb-2(block text @click='dialog=true') Указать интересы
           Interests(:opened='dialog' @close='dialog = false')
           v-btn(block color='primary' @click='search') Поиск

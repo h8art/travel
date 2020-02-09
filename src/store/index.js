@@ -19,7 +19,7 @@ export default new Vuex.Store({
     inSearch: false,
     categories: null,
     events: [],
-    budget: 2500,
+    budget: 3800,
     actualEvents: [],
     trip: null,
     actualTab: 0,
@@ -97,14 +97,16 @@ export default new Vuex.Store({
         }
         
       }
+      console.log(filterdEventsByTime.length)
       state.tabsCount = Math.round(filterdEventsByTime.length/3)
       const filterdEvents = filterdEventsByTime.slice(0, 3)
-      const points = filterdEvents.map(p => {
+      const points = filterdEventsByTime.map(p => {
         return {
           geo: p.venue.google_address.split(",").reverse().join(',').replace(/\s/g, ""),
           id: p.id
         }
       })
+      console.log(points)
       state.actualTab = 0
       Axios.get(`https://api.mapbox.com/optimized-trips/v1/mapbox/driving/37.681174,55.718520;${points.map(g=>g.geo).join(";")}?access_token=pk.eyJ1IjoiaDhhcnQiLCJhIjoiY2p0ajF0bmYxMnY5NTQ2cDdnNzRxMHhlbyJ9.anl09z7LVH8i0-Bm0PHB0w&geometries=geojson`).then(resp => {
         state.actualEvents = filterdEvents
