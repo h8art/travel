@@ -50,16 +50,19 @@ export default new Vuex.Store({
       let filterdEventsByTime = []
       let counter = 0
       while(!isSameHour(tempTime, endAsDate)&&counter < filteredEvents.length) {
+        
         const timeDiff = differenceInMinutes(new Date(filteredEvents[counter].date), tempTime)
-        if(timeDiff>0&&timeDiff<70) {
+        
+        if(timeDiff>20&&timeDiff<70) {
           filterdEventsByTime.push(filteredEvents[counter])
-          tempTime = addMinutes(tempTime, 90)
+          tempTime = addMinutes(new Date(filteredEvents[counter].date), 90)
           counter = 0
+        }else {
+          counter++
         }
-        counter++
       }
       console.log(filterdEventsByTime)
-      const filterdEvents = state.events.filter(e => e.max_price<=state.budget/3).slice(3*actualTab, actualTab*3 + 3)
+      const filterdEvents = filterdEventsByTime.slice(3*actualTab, actualTab*3 + 3)
       const points = filterdEvents.map(p => {
         return {
           geo: p.venue.google_address.split(",").reverse().join(',').replace(/\s/g, ""),
@@ -84,14 +87,16 @@ export default new Vuex.Store({
       let counter = 0
       while(!isSameHour(tempTime, endAsDate)&&counter < filteredEvents.length) {
         const timeDiff = differenceInMinutes(new Date(filteredEvents[counter].date), tempTime)
-        if(timeDiff>0&&timeDiff<70) {
+        console.log(new Date(filteredEvents[counter].date), tempTime, timeDiff)
+        if(timeDiff>20&&timeDiff<70) {
           filterdEventsByTime.push(filteredEvents[counter])
-          tempTime = addMinutes(tempTime, 90)
+          tempTime = addMinutes(new Date(filteredEvents[counter].date), 90)
           counter = 0
+        }else {
+          counter++
         }
-        counter++
+        
       }
-      console.log(filterdEventsByTime)
       state.tabsCount = Math.round(filterdEventsByTime.length/3)
       const filterdEvents = filterdEventsByTime.slice(0, 3)
       const points = filterdEvents.map(p => {

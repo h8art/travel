@@ -5,13 +5,14 @@
         v-card-title.tit {{e.title}}
       v-card-subtitle.pb-0 {{e.venue.title}}
       v-card-text.text--primary
-        div {{}}
+        div {{fTime(new Date(e.date))}}
         div Стоимость: {{e.max_price}} руб.
       v-card-actions
         .spacer
         v-btn(color='primary', text='', @click='openEvent(e.id)') Узнать подробнее
 </template>
 <script>
+import {format} from 'date-fns'
 function formatDate(dat) {
   var monthNames = [
     "янв", "фев", "март",
@@ -26,6 +27,7 @@ function formatDate(dat) {
 
   return day + ' ' + monthNames[monthIndex] + ' ' + year;
 }
+
 export default {
   computed: {
     events() {
@@ -38,6 +40,9 @@ export default {
     },
     fDate(date) {
       return formatDate(date)
+    },
+    fTime(date) {
+      return format(date, "HH:mm")
     }
   }
 }
